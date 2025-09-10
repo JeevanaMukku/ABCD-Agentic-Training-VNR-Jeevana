@@ -1,0 +1,3 @@
+[submodule "Loan-Approval-Predictor"]
+	path = Loan-Approval-Predictor
+	url = https://github.com/JeevanaMukku/Loan-Approval-Predictor.git
