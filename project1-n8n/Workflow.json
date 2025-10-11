@@ -1,0 +1,161 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI news agent creating a concise morning news digest. Start each message with \"Good morning. Here are your top headlines for today:\" and give numbering from 1 to 3, leaving a line gap for each headline.\n\nFrom the given headlines, select the most relevant and diverse 3 news items from different fields (for example: politics, sports, technology, health, environment, business, etc.).\n\nFor each news item:\n- Use clear, simple English.\n- Include specific names of companies, people, or places if available.\n- Avoid vague phrases like \"a major company\" or \"an important event\" - be concrete.\n- Do NOT use *, #, or any special markdown symbols.\n\nHeadlines:\n{{ $json.articles }}\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        -32
+      ],
+      "id": "118776ce-7572-4ffa-99f0-5cd45cb9f304",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "8398704564",
+        "text": "=<b>Morning News Digest</b>\n{{ $json.output }}\n",
+        "replyMarkup": "={\n  \"inline_keyboard\": [\n    [\n      { \"text\": \"More on 1\", \"callback_data\": \"article_1\" },\n      { \"text\": \"More on 2\", \"callback_data\": \"article_2\" },\n      { \"text\": \"More on 3\", \"callback_data\": \"article_3\" }\n    ]\n  ]\n}\n",
+        "forceReply": {},
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        -32
+      ],
+      "id": "9e157e0e-e1d8-485b-8110-6a8cd9ad71ee",
+      "name": "Telegram Message",
+      "webhookId": "d0944ed8-7ed0-4216-a20c-8b6c2287a013",
+      "credentials": {
+        "telegramApi": {
+          "id": "uTkI14OsoVENbj4j",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        -32
+      ],
+      "id": "e15fc226-21dd-45af-9339-309f9fffb169",
+      "name": "Daily Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://gnews.io/api/v4/top-headlines?lang=en&country=in&max=3&apikey=abdd6276f694c92fd96bf31464326f87",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -48,
+        -32
+      ],
+      "id": "62ee58f8-3f91-407b-9853-fd25f4fa5eac",
+      "name": "Fetch News"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        144
+      ],
+      "id": "7978206f-b74f-41db-ac05-074e76629638",
+      "name": "Summarize News",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "et2SFU7uWZ4rhQUx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch News": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize News": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "389321e0-8f06-4b65-b085-47cc083fdac4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f1c6223500b31248ed4142e1c9cb9c27594025a7128ab8adb2d0913ea7925dbb"
+  },
+  "id": "UjYTG0PXNnnX88P2",
+  "tags": []
+}
