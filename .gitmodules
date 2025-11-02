@@ -1,3 +1,6 @@
 [submodule "Loan-Approval-Predictor"]
 	path = Loan-Approval-Predictor
 	url = https://github.com/JeevanaMukku/Loan-Approval-Predictor.git
+[submodule "ai-idea-and-video-generator"]
+	path = ai-idea-and-video-generator
+	url = https://github.com/JeevanaMukku/ai-idea-and-video-generator.git
